@@ -1,16 +1,15 @@
-import flask
 import os
 import urllib.request
 import uuid
 import zipfile
-from flask import request
+from flask import Flask, request
 from pdf2image import convert_from_path
 
-app = flask.Flask(__name__)
+app = Flask(__name__)
 app.config['DEBUG'] = True
 
 @app.route('/', methods=['GET'])
-def home():
+def index():
     tmp_dir  = './tmp'
 
     if 'pdf' in request.args:
@@ -32,7 +31,7 @@ def home():
 
         i = 1
         for page in images_from_path:
-            page.save(os.path.join(image_dir, 'page-' + str(i) + '.webp'), format='WEBP', lossless = True)
+            page.save(os.path.join(image_dir, 'page-' + str(i) + '.webp'), format = 'WEBP', lossless = True)
             i = i + 1
 
         # Create zip
@@ -54,4 +53,4 @@ def home():
         return ''
 
 if __name__ == '__main__':
-    app.run()
+    app.run(threaded = True, port = 5000)
