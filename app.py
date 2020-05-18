@@ -5,13 +5,13 @@ import zipfile
 from flask import Flask, request
 from pdf2image import convert_from_path
 
-app = Flask(__name__)
+tmp_dir = './tmp'
+
+app = Flask(__name__, static_url_path = '', static_folder = tmp_dir)
 app.config['DEBUG'] = True
 
 @app.route('/', methods=['GET'])
 def index():
-    tmp_dir  = './tmp'
-
     if 'pdf' in request.args:
         rhash    = uuid.uuid4().hex
         work_dir = os.path.join(tmp_dir, rhash)
@@ -48,7 +48,7 @@ def index():
         os.rmdir(image_dir)
         os.rmdir(work_dir)
 
-        return request.base_url + 'tmp/' + rhash + '.zip'
+        return request.base_url + rhash + '.zip'
     else:
         return ''
 
