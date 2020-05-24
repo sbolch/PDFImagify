@@ -8,11 +8,13 @@ from pdf2image import convert_from_path
 tmp_dir = './tmp'
 
 app = Flask(__name__, static_url_path = '', static_folder = tmp_dir)
-app.config['DEBUG'] = True
+#app.config['DEBUG'] = True
 
 @app.route('/', methods=['GET'])
 def index():
     if 'pdf' in request.args:
+        global tmp_dir
+
         rhash    = uuid.uuid4().hex
         work_dir = os.path.join(tmp_dir, rhash)
         filename = request.args['pdf']
@@ -53,4 +55,4 @@ def index():
         return ''
 
 if __name__ == '__main__':
-    app.run(threaded = False, port = 5000)
+    app.run(threaded = True, port = 5000)
