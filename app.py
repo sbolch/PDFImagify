@@ -34,7 +34,7 @@ def index():
         i = 1
         for page in images_from_path:
             page.save(os.path.join(image_dir, 'page-' + str(i) + '.webp'), format = 'WEBP', lossless = True)
-            i = i + 1
+            i += 1
 
         # Create zip
         zipf = zipfile.ZipFile(os.path.join(tmp_dir, rhash + '.zip'), 'w', zipfile.ZIP_DEFLATED)
