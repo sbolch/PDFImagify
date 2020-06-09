@@ -5,7 +5,11 @@ import zipfile
 from flask import Flask, request
 from pdf2image import convert_from_path
 
-tmp_dir = './tmp'
+tmp_dir       = './tmp'
+img_format    = 'WEBP'
+img_extension = 'webp'
+lossless      = True
+prefix        = 'page-'
 
 app = Flask(__name__, static_url_path = '', static_folder = tmp_dir)
 #app.config['DEBUG'] = True
@@ -33,7 +37,7 @@ def index():
 
         i = 1
         for page in images_from_path:
-            page.save(os.path.join(image_dir, 'page-' + str(i) + '.webp'), format = 'WEBP', lossless = True)
+            page.save(os.path.join(image_dir, prefix + str(i) + '.' + img_extension), format = img_format, lossless = lossless)
             i += 1
 
         # Create zip
