@@ -7,7 +7,11 @@ Run
 ```console
 > python app.py
 ```
-or use Gunicorn ([eg. deploy on Heroku](https://devcenter.heroku.com/articles/python-gunicorn))
+or use Gunicorn ([eg. deploy on Heroku](https://devcenter.heroku.com/articles/python-gunicorn)), then call server URL like
+
+```console
+http://server?pdf=url/to/pdf
+```
 
 ## Standalone mode
 
