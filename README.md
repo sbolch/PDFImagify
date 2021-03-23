@@ -6,24 +6,25 @@
 
 You can install these with pip
 
-- Flask == 1.1.2
-- pdf2image == 1.14.0
+- Flask==1.1.2
+- pdf2image==1.14.0
+- Pillow==8.1.2
 
 ## Usage
 
 ### Standalone mode
 
-Call `run.py --input=path/to/pdf` in your console
+Call `run.py -i path/to/pdf` in your console
 
 #### Available arguments
 
-- --input: input file or directory (required)
-- --output: output directory
-- --format: output format
+- --input (-i): input file or directory (required)
+- --output (-o): output directory
+- --format (-f): output format
 - --lossless (-l): lossless conversion
-- --prefix: prefix for output file(s)
+- --prefix (-p): prefix for output file(s)
 - --singlepage (-s): get only the first page from input file(s)
-- --width: output file's width
+- --width (-w): output file's width
 
 ### Server mode
 

@@ -3,33 +3,35 @@
 import argparse
 import os
 import sys
-import tempfile
 
+from pathlib import Path
 from pdf2image import convert_from_path
 from PIL import Image
+from tempfile import mkdtemp
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--input", help="input file or directory (required)")
-argparser.add_argument("--output", help="output directory")
-argparser.add_argument("--format", help="output format")
+argparser.add_argument("--input", "-i", help="input file or directory (required)")
+argparser.add_argument("--output", "-o", help="output directory")
+argparser.add_argument("--format", "-f", help="output format")
 argparser.add_argument("--lossless", "-l", help="lossless conversion", action="store_true")
-argparser.add_argument("--prefix", help="prefix for output file(s)")
+argparser.add_argument("--prefix", "-p", help="prefix for output file(s)")
 argparser.add_argument("--singlepage", "-s", help="get only the first page from input file(s)", action="store_true")
-argparser.add_argument("--width", help="output width")
+argparser.add_argument("--width", "-w", help="output width")
 
-args = argparser.parse_args())
+args = argparser.parse_args()
 
 if not args.input:
     sys.exit("Input file or directory is required!")
 
-multiple = os.path.isdir(args.input)
-
-_input     = args.input
-_output    = args.output if args.output else (_input if multiple else os.path.dirname(_input))
-_format    = args.format.upper() if args.format else "JPEG"
-_extension = _format.lower() if _format != 'JPEG' else 'jpg'
-
-tmp_dir = tempfile.mkdtemp()
+multiple    = os.path.isdir(args.input)
+i           = args.input
+o           = args.output if args.output else (i if multiple else os.path.dirname(i))
+fmt         = args.format.upper() if args.format else "JPEG"
+ext         = fmt.lower() if fmt != 'JPEG' else 'jpg'
+tmp_dir     = mkdtemp()
+count       = 0
+current     = 0
+page_counts = []
 
 def convert(i, o):
     f = os.path.basename(i)
@@ -41,35 +43,48 @@ def convert(i, o):
 
     if multiple:
         o = os.path.join(o, f.replace(".pdf", ""))
-        os.mkdir(o)
+        Path(o).mkdir(parents = True, exist_ok = True)
 
-    j = 1
+    page_count = len(pages)
+    j = 0
+    k = 1
+
+    if multiple:
+        for a in range(current, count):
+            page_counts[a] = page_count
+
+        page_count = sum(page_counts)
+
+        if current > 0:
+            for a in range(0, current):
+                j += page_counts[a]
+
     for page in pages:
         if args.singlepage:
-            page.save(os.path.join(o, f.replace("pdf", _extension)), format = _format, lossless = args.lossless)
+            page.save(os.path.join(o, f.replace("pdf", ext)), format = fmt, lossless = args.lossless)
         else:
-            page.save(os.path.join(o, (args.prefix if args.prefix else "") + str(j) + "." + _extension), format = _format, lossless = args.lossless)
+            page.save(os.path.join(o, (args.prefix if args.prefix else "") + str(k) + "." + ext), format = fmt, lossless = args.lossless)
 
-        j += 1
+        print("\033[F" + "\033[K" + str(round((j + k) / page_count * 100)) + "%")
+
+        k += 1
+
+print("0%")
 
 if multiple:
-    count = 0
-    for root, dirs, files in os.walk(_input):
+    for root, dirs, files in os.walk(i):
         for f in files:
-            count += 1
+            if f.endswith(".pdf"):
+                count += 1
+                page_counts.append(0)
 
-    i = 0
-    print("0%")
-    for root, dirs, files in os.walk(_input):
+    for root, dirs, files in os.walk(i):
         for f in files:
-            convert(os.path.join(_input, f), _output)
-
-            print("\033[F" + "\033[K" + str(round(i / count * 100)) + "%")
-            i += 1
-
-    print("\033[F" + "\033[K")
+            if f.endswith(".pdf"):
+                convert(os.path.join(i, f), o)
+                current += 1
 
 else:
-    convert(_input, _output)
+    convert(i, o)
 
-print("Done")
+print("\033[F" + "\033[K" + "Done")
