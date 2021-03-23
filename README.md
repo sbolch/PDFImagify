@@ -1,27 +1,21 @@
 # PDFImagify
 
-## Server mode
+> A simple PDF to image converter
 
-Run
+## Requirements
 
-```console
-> python app.py
-```
-or use Gunicorn ([eg. deploy on Heroku](https://devcenter.heroku.com/articles/python-gunicorn)), then call server URL like
+You can install these with pip
 
-```console
-http://server?pdf=url/to/pdf
-```
+- Flask == 1.1.2
+- pdf2image == 1.14.0
 
-## Standalone mode
+## Usage
 
-Call
+### Standalone mode
 
-```console
-> run.py --input=/path/to/pdf
-```
+Call `run.py --input=path/to/pdf` in your console
 
-### Available arguments
+#### Available arguments
 
 - --input: input file or directory (required)
 - --output: output directory
@@ -30,3 +24,7 @@ Call
 - --prefix: prefix for output file(s)
 - --singlepage (-s): get only the first page from input file(s)
 - --width: output file's width
+
+### Server mode
+
+Run `python app.py` in your console or use Gunicorn ([eg. deploy on Heroku](https://devcenter.heroku.com/articles/python-gunicorn)), then call server URL like `http://server?pdf=url/to/pdf`
