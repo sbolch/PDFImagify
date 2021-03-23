@@ -1,11 +1,12 @@
 import os
+import tempfile
 import urllib.request
 import uuid
 import zipfile
 from flask import Flask, request
 from pdf2image import convert_from_path
 
-tmp_dir       = './tmp'
+tmp_dir       = tempfile.mkdtemp()
 img_format    = 'WEBP'
 img_extension = 'webp'
 lossless      = True
