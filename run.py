@@ -9,22 +9,23 @@ from pdf2image import convert_from_path
 from PIL import Image
 
 argparser = argparse.ArgumentParser()
-argparser.add_argument("--input", help="input file or directory")
+argparser.add_argument("--input", help="input file or directory (required)")
 argparser.add_argument("--output", help="output directory")
 argparser.add_argument("--format", help="output format")
 argparser.add_argument("--lossless", "-l", help="lossless conversion", action="store_true")
-argparser.add_argument("--multiple", "-m", help="convert all files from input directory", action="store_true")
 argparser.add_argument("--prefix", help="prefix for output file(s)")
 argparser.add_argument("--singlepage", "-s", help="get only the first page from input file(s)", action="store_true")
 argparser.add_argument("--width", help="output width")
 
-args = argparser.parse_args()
+args = argparser.parse_args())
 
 if not args.input:
     sys.exit("Input file or directory is required!")
 
+multiple = os.path.isdir(args.input)
+
 _input     = args.input
-_output    = args.output if args.output else (_input if os.path.isdir(_input) else os.path.dirname(_input))
+_output    = args.output if args.output else (_input if multiple else os.path.dirname(_input))
 _format    = args.format.upper() if args.format else "JPEG"
 _extension = _format.lower() if _format != 'JPEG' else 'jpg'
 
@@ -38,7 +39,7 @@ def convert(i, o):
     else:
         pages = convert_from_path(i, output_folder = tmp_dir, single_file = args.singlepage)
 
-    if args.multiple:
+    if multiple:
         o = os.path.join(o, f.replace(".pdf", ""))
         os.mkdir(o)
 
@@ -51,7 +52,7 @@ def convert(i, o):
 
         j += 1
 
-if args.multiple:
+if multiple:
     count = 0
     for root, dirs, files in os.walk(_input):
         for f in files:
