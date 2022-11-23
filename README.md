@@ -6,8 +6,8 @@
 
 You can install these with pip
 
-- pdf2image==1.14.0
-- Pillow==8.1.2
+- pdf2image==1.16.0
+- Pillow==9.3.0
 
 ## Usage
 
